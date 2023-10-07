@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>APK File Upload</title>
+</head>
+<body>
+    <h1>Upload APK File</h1>
+    <form action="upload.php" method="POST" enctype="multipart/form-data">
+        Select APK File to Upload:
+        <input type="file" name="fileToUpload" id="fileToUpload">
+        <input type="submit" value="Upload APK" name="submit">
+    </form>
+
+    <?php
+    if(isset($_POST["submit"])) {
+        $target_dir = "uploads/";
+        $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+        $uploadOk = 1;
+        $fileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+        // Check if file is an APK
+        if($fileType != "apk") {
+            echo "Sorry, only APK files are allowed.";
+            $uploadOk = 0;
+        }
+
+        // Check if file already exists
+        if (file_exists($target_file)) {
+            echo "Sorry, the file already exists.";
+            $uploadOk = 0;
+        }
+
+        // Check file size (you can adjust this value as needed)
+        if ($_FILES["fileToUpload"]["size"] > 5000000) {
+            echo "Sorry, your file is too large.";
+            $uploadOk = 0;
+        }
+
+        // Upload the file if all checks pass
+        if ($uploadOk == 0) {
+            echo "Sorry, your file was not uploaded.";
+        } else {
+            if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+                echo "The file ". htmlspecialchars( basename( $_FILES["fileToUpload"]["name"])). " has been uploaded.";
+            } else {
+                echo "Sorry, there was an error uploading your file.";
+            }
+        }
+    }
+    ?>
+</body>
+</html>
